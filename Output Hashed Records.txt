@@ -1,0 +1,3 @@
+Customers with Valid Payment
+Customer ID = 333, First Name = f, Last Name = e, Payment Amount = $11.16, Exp Date = 09-3033, Encrypted CC Number = d8777fd0abea7b44c10769b5e62b0039
+Customer ID = 23, First Name = trinh, Last Name = le, Payment Amount = $267.1152, Exp Date = 09-4944, Encrypted CC Number = d8777fd0abea7b44c10769b5e62b0039
