@@ -49,11 +49,11 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return "Customer ID = " + id + ", First Name = " + fName + ", Last Name = " + lName + ", Payment Amount = $" + String.format("%.2f",amount) + ", Credit Card = "+ card;
+		return "Customer ID = " + id + ", First Name = " + fName + ", Last Name = " + lName + ", Payment Amount = $" + String.format("%.2f",amount) + ", Credit Card = "+ card.toString();
 	}
 	
 	public String toStringHash() {
-		return "Customer ID = " + id + ", First Name = " + fName + ", Last Name = " + lName + ", Payment Amount = $" + amount + ", Encrypted CC Number = ";
+		return "Customer ID = " + id + ", First Name = " + fName + ", Last Name = " + lName + ", Payment Amount = $" + amount + ", Exp Date = " + card.getExpDate() + ", Encrypted CC Number = ";
 	}
 
 	public int getId() {
