@@ -24,6 +24,8 @@ import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
+
+
 public class Payment {
 	public static Validation validating;
 	public static HashCode hashing;
@@ -31,6 +33,7 @@ public class Payment {
 	// the main entry method of the program that will get data from user and
 	// perform the business logic
 	public static void main(String[] args) throws FileNotFoundException {
+		
 		hashing = new HashCode();
 		validating = new  Validation();
 		int n = 0;
@@ -63,6 +66,10 @@ public class Payment {
 		}
 		customers = new Customer[n];
 		for (int i = 0; i<customers.length; i++){
+			
+			if (i == n-1&n>1){JOptionPane.showMessageDialog(null, "The following customer and payment\nwill be the final entry.");} // strike add warning for last
+			
+			
 			option = JOptionPane.YES_OPTION;
 			while(option == JOptionPane.YES_OPTION) {
 				try {
@@ -102,13 +109,89 @@ public class Payment {
 					}
 				}
 			}
+			
+			
 			option = JOptionPane.YES_OPTION;
 			while(option == JOptionPane.YES_OPTION) {
 				try {
 					id = Integer.parseInt(JOptionPane.showInputDialog(null, "What is the customer's ID number?\nEnter '0' to stop customer input."));
-					//if(id == 0) {
-						//break;
-					//}
+					
+						if (id == 0) {
+							
+							
+							
+						    int count = 0;
+						    for (int index = 0; index < customers.length; index++) 
+						    {
+						        if(customers[index] != null)
+						        {
+						            count++;
+						        }
+						    }
+						    
+						    // special display out
+						    
+						    if (n==1) {System.exit(0);} else {
+						    
+						    JOptionPane.showMessageDialog(null, "Input process will end per your command.\n\nPrevious customer payments will now be displayed.");
+						    
+					 		String statsOut = "====Customer Statistics====\n";
+					 		Locale locale = new Locale("en", "US");      
+					 		NumberFormat dollar_format = NumberFormat.getCurrencyInstance(locale);
+					 		String average_string = null;
+					 		String max_string = null;
+					 		String min_string = null;
+					 		double total = 0;
+					 		double average = 0;
+					 		double max = 0;
+					 		double min = customers[0].getAmount();
+					 		int max_index = 0;
+					 		int min_index = 0;
+					 		for (int d = 0; d < count; d++) {
+					 			total += customers[d].getAmount();
+					 			average = total / count;
+					 			if(customers[d].getAmount() > max) {
+					 				max = customers[d].getAmount();
+					 				max_index = d;
+					 			}
+					 			if(customers[d].getAmount() < min) {
+					 				min = customers[d].getAmount();
+					 				min_index = d;
+					 			}
+					 			
+				 			}
+				 			//statsOut += customers[i].toString() + "\n";
+				 		
+					 		average_string = "The average amount is: " + dollar_format.format(average) + "\n";
+							max_string = "The maximum amount is: " + dollar_format.format(customers[max_index].getAmount()) + "\n";
+							min_string = "The minimum amount is: " + dollar_format.format(customers[min_index].getAmount()) + "\n";
+							statsOut += average_string + max_string + min_string;
+					 		JOptionPane.showMessageDialog(null, statsOut);
+							
+							
+							// end special display out
+				 		
+					 		// start special write to file
+					 		
+					 		
+					 		String message = "Customers with Valid Payment\r\n";
+					     	for (int w = 0; w <count; w++) 
+					     		message += customers[w].toStringHash() + hashing.getHashCode(customers[w].getCard().getNumber().toString())+"\r\n";     	
+					     	java.io.File file = new java.io.File("Output Hashed Records.txt"); // strike renamed file
+					     	java.io.PrintWriter output = new java.io.PrintWriter(file);     	
+					     	output.print(message);     	
+					     	output.close();     	
+					     	JOptionPane.showMessageDialog(null, "Done writing to file,\nwhich has been saved\nin source folder.\n\nHave a nice day."); // strike remove space
+					 		
+					 		
+					 		// end special write to file	
+							
+							System.exit(0);
+						    }
+						}
+			
+					// strike end
+					
 					option = 1;
 				}
 				catch(Exception ex){
@@ -121,13 +204,28 @@ public class Payment {
 					}
 				}
 			}
+			
 			option = JOptionPane.YES_OPTION;
 			while(option == JOptionPane.YES_OPTION) {
 				try {
-					amount = Double.parseDouble(JOptionPane.showInputDialog(null, "What is the payment amount?"));
-					if(amount < 0) {
+					Double tempAmount = Double.parseDouble(JOptionPane.showInputDialog(null, "What is the payment amount?")); // strike added random discount logic
+					if(tempAmount < 0) {
 						throw new Exception();
 					}
+					
+					int max = 20;
+					int min = 5;
+			 		Locale locale = new Locale("en", "US");      
+			 		NumberFormat dollar_format = NumberFormat.getCurrencyInstance(locale);
+					int discount = min + (int)(Math.random() * ((max - min) + 1));
+					double discountFactor = (100.00-discount);
+					amount = tempAmount * (discountFactor/100.00);
+					String display = "For a payment amount of "+dollar_format.format(tempAmount)+",\nyou qualify for a discount of "+dollar_format.format(tempAmount-amount)+", or "+(discount)+"%.\n\nYour final payment is "+dollar_format.format(amount)+".";
+					
+					JOptionPane.showMessageDialog(null, display);
+					
+					// strike
+					
 					option = 1;
 				}
 				catch(Exception ex){
@@ -169,7 +267,7 @@ public class Payment {
 						}
 						addCustomer(new Customer(fName, lName, id, amount, new CreditCard(number, expDate)));
 					}
-					else {
+					else{
 						throw new Exception();
 					}
 					option = 1;
@@ -184,8 +282,8 @@ public class Payment {
 					}
 				}
 			}
-			
 		}
+		
 		displayStat();
 		writeToFile();
 	} //End of the main class
@@ -246,10 +344,10 @@ public class Payment {
  		String message = "Customers with Valid Payment\r\n";
      	for (int i = 0; i <customers.length; i++) 
      		message += customers[i].toStringHash() + hashing.getHashCode(customers[i].getCard().getNumber().toString())+"\r\n";     	
-     	java.io.File file = new java.io.File("Outputting.txt");
+     	java.io.File file = new java.io.File("Output Hashed Records.txt"); // strike renamed file
      	java.io.PrintWriter output = new java.io.PrintWriter(file);     	
      	output.print(message);     	
      	output.close();     	
-     	JOptionPane.showMessageDialog(null, "Done writing to file,\n which has been saved\nin source folder.\n\nHave a nice day.");
+     	JOptionPane.showMessageDialog(null, "Done writing to file,\nwhich has been saved\nin source folder.\n\nHave a nice day."); // strike remove space
      } // end of the writeToFile method
 }
